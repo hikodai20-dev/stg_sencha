@@ -13,17 +13,16 @@ slides:
   {% for slide in page.slides %}
     <div class="mySlides">
       <img src="{{ slide.image | relative_url }}" alt="{{ slide.caption }}">
+      <div class="slide-caption d-none d-md-block">
+        <span class="caption-text">{{ slide.caption }}</span>
+      </div>
     </div>
   {% endfor %}
   <div class="fade-overlay" aria-hidden="true"></div>
-  <div class="caption-band">
-    <div class="dot-container">
-      {% for slide in page.slides %}
-        <span class="dot" data-slide="{{ forloop.index }}" onclick="window.currentSlide(this.dataset.slide)"></span>
-      {% endfor %}
-    </div>
-    <span class="caption-text"></span>
-  </div>
+</div>
+
+<div class="caption-band d-md-none">
+  <span class="caption-text"></span>
 </div>
 
 <div class="container my-5 px-4" style="max-width: 1400px;">
@@ -72,12 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
   slides = Array.from(document.querySelectorAll('.mySlides'));
   dots = Array.from(document.querySelectorAll('.dot'));
   overlay = document.querySelector('.fade-overlay');
-  const captionText = document.querySelector('.caption-text');
+  const bandText = document.querySelector('.caption-band .caption-text');
   if (!slides.length) return;
   slides.forEach((s, i) => { s.style.display = 'block'; if (i === 0) s.classList.add('active'); });
   dots[0].classList.add('active');
-  captionText.innerText = slides[0].querySelector('img').alt;
-  overlay && (overlay.style.opacity = '0', overlay.style.transition = `opacity ${HALF}ms ease-in-out`);
+  bandText.innerText = slides[0].querySelector('img').alt;
   slideTimer = setInterval(() => gotoSlide(slideIndex + 1), INTERVAL);
 });
 
@@ -93,17 +91,16 @@ function gotoSlide(target) {
   neu.style.opacity = '0';
   [old, neu].forEach(s => s.style.transition = `opacity ${TRANS}ms ease-in-out`);
   neu.getBoundingClientRect();
-  overlay && (overlay.style.transition = `opacity ${HALF}ms ease-in-out`, overlay.style.opacity = '0.3');
+  const bandText = document.querySelector('.caption-band .caption-text');
+  bandText.innerText = neu.querySelector('img').alt;
+  neu.querySelector('.caption-text').innerText = neu.querySelector('img').alt;
   requestAnimationFrame(() => { old.style.opacity = '0'; neu.style.opacity = '1'; });
-  setTimeout(() => overlay && (overlay.style.opacity = '0'), HALF);
   setTimeout(() => {
     old.style.display = 'none';
     [old, neu].forEach(s => { s.style.transition = s.style.opacity = ''; });
     slides.forEach(s => s.classList.remove('active'));
     neu.classList.add('active');
     slideIndex = target;
-    const captionText = document.querySelector('.caption-text');
-    captionText.innerText = neu.querySelector('img').alt;
     animating = false;
     slideTimer = setInterval(() => gotoSlide(slideIndex + 1), INTERVAL);
   }, TRANS);

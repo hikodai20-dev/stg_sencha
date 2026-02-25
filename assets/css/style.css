@@ -2,6 +2,7 @@
 :root {
   /* カラーパレット */
   --color-bg: #fcfaf2; /* 生成り色 */
+  --color-bg-rgb: 252, 250, 242;
   --color-text: #4a4a4a;
   --color-heading: #333333;
   --color-border: #e0dcd0;
@@ -279,7 +280,7 @@ img {
   height: 100%;
   background-color: var(--color-bg); /* サイト背景を淡く被せる */
   pointer-events: none;
-  opacity: 0;
+  opacity: 0 !important;
   z-index: 5;
 }
 
@@ -290,7 +291,7 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(var(--color-bg), 0.8); /* 半透明な生成り色 */
+  background-color: rgba(var(--color-bg-rgb), 0.9); /* 半透明な生成り色 */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -337,8 +338,8 @@ img {
 
 @media (max-width: 768px) {
   .slideshow-container {
-    height: 55vh; /* スマホでは高さを控えめにする（写真の左右切れを軽減） */
-    background-color: var(--color-bg); /* 背景を生成り色に */
+    height: 55vh !important; /* 画面の5.5割をスライドエリアとして確保 */
+    background-color: var(--color-bg); /* contain 表示で生じる余白を背景と一体化 */
     padding-left: 15px;
     padding-right: 15px;
   }
@@ -346,8 +347,15 @@ img {
   .mySlides img {
     height: 100%;
     width: 100%;
-    object-fit: cover; /* 写真全体を表示（背景が出る）か、お好みで cover のまま高さを調整 */
+    object-fit: contain !important; /* 写真の全景を維持 */
     object-position: center center;
+  }
+
+  .caption-band {
+    min-height: 15vh; /* 写真(55vh) + 帯(15vh) = 70vh */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .caption-text {
